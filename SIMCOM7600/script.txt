@@ -1,0 +1,4 @@
+send AT$QCRMCALL=1,1
+sleep 4
+! pkill minicom
+
