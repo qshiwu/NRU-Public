@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 ##### For SIMCOM 7600 #########################
 
 # Insert Relevant Drivers
@@ -22,9 +21,9 @@ sleep 1
 
 # SIM7600SA Dial (Guide 3.3)
 sudo echo 'send AT$QCRMCALL=1,1
-sleep 4
+sleep 2
 ! pkill minicom
-' > script.txt
+' >script.txt
 
 sleep 1
 
@@ -37,8 +36,4 @@ sudo udhcpc -i wwan0
 
 sleep 2
 
-
 # Done!
-
-
-
