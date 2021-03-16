@@ -19,11 +19,24 @@ sleep 1
 sudo ifconfig wwan0 up
 sleep 1
 
-# SIM7600SA Dial (Guide 3.3)
-sudo echo 'send AT$QCRMCALL=1,1
+# SIM7600SA Dial without PIN (Guide 3.3)
+sudo echo 'send AT\$QCRMCALL=1,1
 sleep 2
 ! pkill minicom
 ' >script.txt
+
+# SIM7600SA Dial with PIN (Guide 3.3)
+# export SIM_PASSWORD=1024
+#sudo echo 'send AT+CFUN=0
+#sleep 1
+#send AT+CFUN=1
+#sleep 1
+#send AT+CPIN=\"$SIM_PASSWORD\"
+#sleep 1
+#send AT\$QCRMCALL=1,1
+#sleep 2
+#! pkill minicom
+#' >script.txt
 
 sleep 1
 

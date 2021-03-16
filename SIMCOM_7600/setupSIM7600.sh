@@ -3,10 +3,10 @@
 echo "* If your SIM card has password, please press 'q' to quit, and setup your PIN code in neousys_start_SIM7600.sh first. "
 
 read -n 1 k <&1
-if [[ $k = q ]] || [[ $k = Q ]] ; then
-echo ""
-echo "SIM7600SA Installation Stop."
-exit
+if [[ $k = q ]] || [[ $k = Q ]]; then
+    echo ""
+    echo "SIM7600SA Installation Stop."
+    exit
 fi
 
 echo "Continue SIM7600SA Installation ..."
@@ -18,8 +18,8 @@ cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_OPTION=
 
 ### One Time Setup
 # Add Blacklist to unwanted modeom driver
-sudo grep -q -F 'blanncklist qmi_wwan' /etc/modprobe.d/blacklist-modem.conf 
-sudo echo 'blacklist qmi_wwan' >> /etc/modprobe.d/blacklist-modem.conf
+sudo grep -q -F 'blacklist qmi_wwan' /etc/modprobe.d/blacklist-modem.conf
+sudo echo 'blacklist qmi_wwan' >>/etc/modprobe.d/blacklist-modem.conf
 
 # Install minicom
 sudo apt-get install -y minicom
@@ -47,4 +47,3 @@ cp /etc/network/interfaces interfaces_backup/interfaces_$now
 cp interfaces_sim7600 /etc/network/interfaces
 
 echo "Reboot to test 4G LTE"
-

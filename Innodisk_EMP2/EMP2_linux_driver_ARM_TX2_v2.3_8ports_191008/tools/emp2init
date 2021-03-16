@@ -1,0 +1,122 @@
+#!/bin/bash
+
+source /usr/lib/emp2/emp2lib
+
+if [[ $EUID -ne 0 ]]
+then
+	echo "This script must be run as root" 1>&2
+	exit 1
+fi
+
+pcidev=`lspci -d 13a8:*`
+if [ ! -z "$pcidev" ]
+then
+	pci_addr=`echo $pcidev | cut -f 1 -d ' '`
+	pci_addr=0000:$pci_addr
+
+	pci_pid=`echo $pcidev | cut -f 7 -d ' '`
+	if [ "$pci_pid" = "0354" ]; then
+		nr_ports=4
+		ports="1 2 3 4"
+		echo "Found Exar device 0354 (4 ports)"
+	elif [ "$pci_pid" = "0358" ]; then
+		nr_ports=8
+		ports="1 2 3 4 5 6 7 8"
+		echo "Found Exar device 0358 (8 ports)"
+	else
+		echo "Unknow Exar device ${pci_pid} found..."
+		exit 1
+	fi
+fi
+
+if [ -e "/sys/bus/pci/drivers/serial/$pci_addr" ]
+then
+	echo "Device bound on 8250 already, unbind it"
+	echo $pci_addr > /sys/bus/pci/drivers/serial/unbind
+fi
+
+modprobe xr17v35x
+
+if [ ! -e "$DEVFILE" ]
+then
+	echo "Device driver init failed: tty device not found."
+	exit 1
+fi
+
+if [ "$1" = "reset" ]
+then
+	echo "Reset EMP2 configuration"
+	rm -f $CFGFILE
+fi
+
+if [ -f "$CFGFILE" ]
+then
+	source $CFGFILE
+	if [ "$nr_ports" != "$PORTS" ]
+	then
+		echo "Port number not match, reset configuration"
+		rm -f $CFGFILE
+	fi
+fi
+
+emp2_input_all
+
+if [ ! -f "$CFGFILE" ]
+then
+	for i in $ports
+	do
+		varsel=PORT${i}SEL
+		varlvl=PORT${i}LVL
+		varmask=PORT${i}MASK
+		varshift=PORT${i}SHIFT
+
+		# read MPIO input level
+		regval=`$REGCTRL read ${!varlvl}`
+		if [ ! $? -eq 0 ]; then
+			# read fail? should not happen
+			exit 1
+		fi
+
+		# check MPIO LEVEL for port HW design
+		regval=$(($regval & ${!varmask}))
+		regval=$(($regval >> ${!varshift}))
+		case $regval in
+		$MODEVAL_lo) declare PORT${i}MODE=232
+		      declare PORT${i}FIX=no
+		      ;;
+		$MODEVAL_232) declare PORT${i}MODE=232
+		      declare PORT${i}FIX=yes
+		      ;;
+		$MODEVAL_485hd) declare PORT${i}MODE=485hd
+		      declare PORT${i}FIX=yes
+		      ;;
+		$MODEVAL_485fd) declare PORT${i}MODE=485fd
+		      declare PORT${i}FIX=yes
+		      ;;
+		*)    echo "Invalid port mode read ($regval)..."
+		      exit 1
+		      ;;
+		esac
+	done
+
+	# save configuration file
+	PORTS=$nr_ports
+	emp2_save_configuration
+fi
+
+# load configuration file
+source $CFGFILE
+
+# restore configuration
+for i in $ports
+do
+	varfix=PORT${i}FIX
+	varmode=PORT${i}MODE
+	if [ ${!varfix} != "yes" ]
+	then
+		emp2cfg $i ${!varmode}
+	fi
+done
+
+exit 0
+

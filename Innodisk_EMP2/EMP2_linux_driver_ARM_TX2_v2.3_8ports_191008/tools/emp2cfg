@@ -1,0 +1,81 @@
+#!/bin/bash
+
+source /usr/lib/emp2/emp2lib
+
+if [[ $EUID -ne 0 ]]
+then
+       	echo "This script must be run as root" 1>&2
+        exit 1
+fi
+
+if [ ! -e "$DEVFILE" ]; then
+	echo "EMP2 TTY device not found" 1>&2
+	exit 1
+fi
+
+if [ $# -lt 2 ]; then
+	echo "Usage: $0 [port] [mode]"
+	echo "    port: port number, start from 1"
+	echo "    mode: lo, 232, 485hd, 485fd"
+	exit 1
+fi
+
+if [ ! -f "$CFGFILE" ]
+then
+	echo "Configuration file ($CFGFILE) not exist, run emp2init first"
+	exit 1 
+fi
+
+source $CFGFILE
+
+varmode=PORT${1}MODE
+if [ -z "${!varmode}" ]
+then
+	echo "Invalid port number $1"
+	exit 1
+fi
+
+varmodeval=MODEVAL_${2}
+if [ -z "${!varmodeval}" ]
+then
+	echo "Invalid port mode, should be one of {lo, 232, 485hd, 485fd}"
+	exit 1
+fi
+
+varfix=PORT${1}FIX
+if [ "${!varfix}" = "yes" ]
+then
+	echo "Port $1 has HW fixed mode ${!varmode}"
+	exit 1
+fi
+
+emp2_set_output ${1}
+
+varsel=PORT${1}SEL
+varlvl=PORT${1}LVL
+varmask=PORT${1}MASK
+varshift=PORT${1}SHIFT
+
+regval=`$REGCTRL read ${!varlvl}`
+
+if [ ! $? -eq 0 ]; then
+	echo "Read register fail"
+	exit 1
+fi
+
+regval=$(($regval & ~${!varmask}))
+regval=$(($regval | $((${!varmodeval} << ${!varshift}))))
+
+$REGCTRL write ${!varlvl} $regval
+
+if [ ! $? -eq 0 ]; then
+	echo "Write register fail"
+	exit 1
+fi
+
+# update configuration file
+declare PORT${1}MODE=$2
+emp2_save_configuration
+
+echo "Switch port $1 to mode $2 finished"
+exit 0
