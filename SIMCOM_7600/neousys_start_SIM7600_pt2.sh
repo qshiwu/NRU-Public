@@ -20,7 +20,7 @@ sudo ifconfig wwan0 up
 sleep 1
 
 # SIM7600SA Dial without PIN (Guide 3.3)
-sudo echo 'send AT\$QCRMCALL=1,1
+sudo echo 'send AT$QCRMCALL=1,1
 sleep 2
 ! pkill minicom
 ' >script.txt

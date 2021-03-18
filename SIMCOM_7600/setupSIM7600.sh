@@ -21,11 +21,13 @@ cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_OPTION=
 sudo grep -q -F 'blacklist qmi_wwan' /etc/modprobe.d/blacklist-modem.conf
 sudo echo 'blacklist qmi_wwan' >>/etc/modprobe.d/blacklist-modem.conf
 
+sudo apt update
 # Install minicom
 sudo apt-get install -y minicom
 
 # Install udhcpc
 sudo apt-get install -y udhcpc
+
 
 # Make Simcom driver
 cd sim7600_driver/
