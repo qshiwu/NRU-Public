@@ -3,11 +3,11 @@
 ##### For SIMCOM 7600 #########################
 
 # Insert Relevant Drivers
-sudo modprobe option
-sleep 1
+#sudo modprobe option
+#sleep 1
 
-sudo modprobe usb_wwan
-sleep 1
+#sudo modprobe usb_wwan
+#sleep 1
 
 sudo modprobe sim7500_sim7600_wwan
 sleep 1

@@ -13,8 +13,7 @@ read -n 1 k <&1
 # CONFIG_USB_SERIAL_WWAN=y
 # CONFIG_USB_SERIAL_OPTION=y
 #
-# compiled sim7500_sim7600_wwan.c into kerne
-# remove old SIMCOM model described in qmi_wwan.c
+# remove old SIMCOM model described in the enum of qmi_wwan.c
 
 cp /boot/Image image_backup/
 echo "replace kerenl image"
