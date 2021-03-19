@@ -10,10 +10,16 @@ read -n 1 k <&1
 # The only changed settings in kernel
 # 
 
+cp /boot/Image image_backup/
+echo "replace kerenl image"
+sudo cp Image /boot/
+
 # The following kernel option are expected to be y or m
 cat /proc/config.gz | zgrep CONFIG_USB_SERIAL=
 cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_WWAN=
 cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_OPTION=
+
+
 
 ### One Time Setup
 # Add Blacklist to unwanted modeom driver
