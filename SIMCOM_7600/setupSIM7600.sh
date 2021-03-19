@@ -1,15 +1,12 @@
 #!/bin/bash
 
-echo "* If your SIM card has password, please press 'q' to quit, and setup your PIN code in neousys_start_SIM7600.sh first. "
+echo "1. If your SIM card has password, please remember to setup your PIN code in dialupSIMCOM7600SA.sh "
+echo "2. Please make your NRU with Ethernet connected"
+echo "<press any key to continue ...>"
 
 read -n 1 k <&1
-if [[ $k = q ]] || [[ $k = Q ]]; then
-    echo ""
-    echo "SIM7600SA Installation Stop."
-    exit
-fi
 
-echo "Continue SIM7600SA Installation ..."
+
 
 # The following kernel option are expected to be y or m
 cat /proc/config.gz | zgrep CONFIG_USB_SERIAL=
@@ -48,4 +45,4 @@ cp /etc/network/interfaces interfaces_backup/interfaces_$now
 # Copy a modified interface for SIM7600SA
 cp interfaces_sim7600 /etc/network/interfaces
 
-echo "Reboot to test 4G LTE"
+echo "Reboot, then call dialupSIMCOM7600SA.sh to test 4G LTE"

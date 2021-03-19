@@ -26,14 +26,14 @@ sleep 2
 ' >script.txt
 
 # SIM7600SA Dial with PIN (Guide 3.3)
-# export SIM_PASSWORD=1024
+
 #sudo echo 'send AT+CFUN=0
 #sleep 1
 #send AT+CFUN=1
 #sleep 1
-#send AT+CPIN=\"$SIM_PASSWORD\"
+#send AT+CPIN="<SIM_PIN_CODE>" # replace <SIM_PIN_CODE> with your pincode, e.g., 0000
 #sleep 1
-#send AT\$QCRMCALL=1,1
+#send AT$QCRMCALL=1,1
 #sleep 2
 #! pkill minicom
 #' >script.txt
