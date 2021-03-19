@@ -7,17 +7,23 @@ echo "<press any key to continue ...>"
 read -n 1 k <&1
 
 
-# The only changed settings in kernel
+# The new kernel image set
 # 
+# CONFIG_USB_SERIAL=y
+# CONFIG_USB_SERIAL_WWAN=y
+# CONFIG_USB_SERIAL_OPTION=y
+#
+# compiled sim7500_sim7600_wwan.c into kerne
+# remove old SIMCOM model described in qmi_wwan.c
 
 cp /boot/Image image_backup/
 echo "replace kerenl image"
 sudo cp Image /boot/
 
 # The following kernel option are expected to be y or m
-cat /proc/config.gz | zgrep CONFIG_USB_SERIAL=
-cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_WWAN=
-cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_OPTION=
+#cat /proc/config.gz | zgrep CONFIG_USB_SERIAL=
+#cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_WWAN=
+#cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_OPTION=
 
 
 
