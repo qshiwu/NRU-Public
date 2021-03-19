@@ -7,6 +7,8 @@ echo "<press any key to continue ...>"
 read -n 1 k <&1
 
 
+# The only changed settings in kernel
+# 
 
 # The following kernel option are expected to be y or m
 cat /proc/config.gz | zgrep CONFIG_USB_SERIAL=
@@ -15,8 +17,8 @@ cat /proc/config.gz | zgrep CONFIG_USB_SERIAL_OPTION=
 
 ### One Time Setup
 # Add Blacklist to unwanted modeom driver
-sudo grep -q -F 'blacklist qmi_wwan' /etc/modprobe.d/blacklist-modem.conf
-sudo echo 'blacklist qmi_wwan' >>/etc/modprobe.d/blacklist-modem.conf
+#sudo grep -q -F 'blacklist qmi_wwan' /etc/modprobe.d/blacklist-modem.conf
+#sudo echo 'blacklist qmi_wwan' >>/etc/modprobe.d/blacklist-modem.conf
 
 sudo apt update
 # Install minicom
